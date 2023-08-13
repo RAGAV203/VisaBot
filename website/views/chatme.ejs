@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>VISABOT</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <style>
+        div.scrollable {
+          max-height: 200px;
+          overflow-y: auto;
+        }
+    form {
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      input[type="text"] {
+        flex-grow: 1;
+        width: 100%;
+        max-width: calc(100% - 80px);
+        margin-right: 10px;
+        box-sizing: border-box;
+      }
+
+      button[type="submit"] {
+        flex-shrink: 0;
+        width: 70px;
+        box-sizing: border-box;
+      }
+    </style>
+      </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(() => {
+        // Handle form submission
+        const chatHistory = $('div.scrollable');
+
+        // Set the maximum height of the chat history element
+        chatHistory.css('max-height', $(window).height() - chatHistory.offset().top - 20);
+
+        // Scroll to the bottom of the chat history element
+        chatHistory.scrollTop(chatHistory.prop('scrollHeight'));
+
+        
+        $('form').submit(async (event) => {
+          event.preventDefault();
+
+          // Get the user's message
+          const message = $('input[type="text"]').val();
+          if (message.toLowerCase() === 'thank you') {
+             var ratingPopup = $('<div>').addClass('rating-popup');
+             var ratingButtons = $('<div>').addClass('rating-buttons');
+             var ratingTitle = $('<h3>').text('Please rate our chatbot:(1-5)');
+             var rating1 = $('<button>').text('1');
+             var rating2 = $('<button>').text('2');
+             var rating3 = $('<button>').text('3');
+             var rating4 = $('<button>').text('4');
+             var rating5 = $('<button>').text('5');
+
+             ratingButtons.append(rating1, rating2, rating3, rating4, rating5);
+             ratingPopup.append(ratingTitle, ratingButtons);
+             $('rate').append(ratingPopup);
+            }
+
+// Handle rating button clicks
+$('.rating-popup button').on('click', function() {
+  var rating = $(this).text().charAt(0);
+  alert('You rated our chatbot ' + rating + ' stars. Thank you for your feedback!');
+  $('.rating-popup').remove();
+});
+
+
+
+          // Clear the input field
+          $('input[type="text"]').val('');
+          chatHistory.append(`<img src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg" alt="" width=3% height="auto" /> ${message}`);
+          // Send a POST request to the chat endpoint
+          const response = await fetch('/chatbot', {
+            method: 'POST',
+            body: JSON.stringify({ message }),
+            headers: { 'Content-Type': 'application/json' },
+          });
+
+          // Parse the JSON response
+          const json = await response.json();
+
+          // Display the chatbot's response
+          const values = json.message.split('\n');
+          let html = '';
+          values.forEach((value) => {
+            html +=  `<li>${value}</li>`;
+          });
+          chatHistory.append(html);
+
+          // Scroll to the bottom of the chat history element
+          chatHistory.scrollTop(chatHistory.prop('scrollHeight'));
+        });
+      });
+    </script>
+  </head>
+  <body>
+    
+    <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Header -->
+                <header id="header">
+                    <h1><a href="/"><img src="https://cdn.dribbble.com/users/689802/screenshots/4044319/respage_chatbot_bubbletalk_dribbble.gif" alt="" width=17% height="auto" /></a></h1>
+                
+                    <nav class="links">
+                        <ul>
+                            <li><a href="#">LINK1</a></li>
+                            <li><a href="#">LINK2</a></li>
+                            <li><a href="#">LINK3</a></li>
+                        </ul>
+                    </nav>
+                </header>
+
+
+            <!-- Main -->
+                <div id="main">
+
+                    <!-- Post -->
+                        <article class="post">
+                            <header>
+                                <div class="title">
+                                    <center><h2>CHAT</h2></center>
+                                </div>
+                            </header>
+                               <div class="scrollable">
+                                    <ul1></ul1>
+                                </div>
+                                    
+                            <footer>
+                                
+                                    <form>
+                                    <input type="text" name="message" placeholder="Type your travel queries  " required>
+                                        <button type="submit"><img src="https://static.thenounproject.com/png/3548028-200.png" width=200% height="auto" ></button>
+                                </form>
+                                
+                            </footer>
+                        </article>
+
+                </div>
+
+            <!-- Sidebar -->
+                <section id="sidebar">
+
+                    <!-- Intro -->
+                        <section id="intro">
+                            <header>
+                                <h2>VISABOT</h2>
+                                <p>CHAT WITH ME! FOR YOU TRAVEL QUERIES</p>
+                                <rate></rate>
+                            </header>
+                        </section>
+                </section>
+        </div>
+        </body>
+
+</html>
+
+
+
+
